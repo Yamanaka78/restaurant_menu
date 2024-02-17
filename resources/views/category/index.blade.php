@@ -8,6 +8,10 @@
     <a href="{{ url('product/create') }}" >＜戻る</a>
   </div>
 
+  @if (session('message'))
+  <div class="alert alert-success" role="alert">{{ session('message') }}</div>
+  @endif
+
   <table class="table table-bordered mt-2">
     <thead class="table-dark">
       <tr>
@@ -29,23 +33,36 @@
     </tr>
     </thead>
     <tbody>
+      @if (count($categories) > 0)
+        @foreach ($categories as $key=>$category)
       <tr>
         <th scope="row">
-          1
+          {{ $key+1 }}
         </th>
         <td>
-          2020/2/11
+          {{ $category->created_at->format('Y/m/d') }}
         </td>
         <td>
+          {{ $category->name }}
+        </td>
+        <td>
+        <a href="{{ route('category.edit', ['category' => $category->id ]) }}">
           <button type="button" class="btn btn-outline-danger"><i class="far fa-edit"></i> 編集</button>
-        </td>
-        <td>
-          <button type="button" class="btn btn-outline-primary"><i class="far fa-trash-alt"></i></button>
+        </a>
         </td>
         <td>
           <button type="button" class="btn btn-outline-primary"><i class="far fa-trash-alt"></i>削除</button>
         </td>
       </tr>
+      @endforeach
+
+      @else
+      <tr>
+        <td colspan=5>
+          追加されたカテゴリーはありません。
+        </td>
+      </tr>
+      @endif
     </tbody>
   </table>
 

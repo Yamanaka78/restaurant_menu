@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -13,7 +14,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('category.index');
+        $categories = Category::latest()->get();
+        return view('category.index', ['categories' => $categories]);
     }
 
     /**
@@ -34,7 +36,11 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Category::create([
+            'name' => request('name')
+        ]);
+
+        return redirect()->back()->with('message', 'カテゴリが追加されました');
     }
 
     /**
@@ -56,7 +62,8 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $category = Category::find($id);
+        return view('category.edit', ['category' => $category]);
     }
 
     /**
@@ -69,6 +76,10 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $category = Category::find($id);
+        $category->name = request('name');
+        $category->save;
+        return redirect('/category')->with('message', 'カテゴリが編集されました');
     }
 
     /**

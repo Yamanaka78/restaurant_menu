@@ -6,6 +6,9 @@
   <a href="{{ url('/product/create') }}">＜ 戻る</a>
   </div>
 
+  @if (session('message'))
+  <div class="alert alert-success" role="alert"> {{ session('message') }}</div>
+  @endif
   <form action="{{ route('category.store') }}" method="POST">
     @csrf
     <div class="form-group">
@@ -20,3 +23,5 @@
   </div>
 </div>
 @endsection
+
+
