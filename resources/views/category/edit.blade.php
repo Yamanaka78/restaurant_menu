@@ -12,12 +12,15 @@
     @method('PUT')
     <div class="form-group">
       <label for="categoryAdd" class="font-weight-bold">カテゴリー編集</label>
-      <input type="text" class="form-control" id="categoryAdd" name="name" value="{{ $category->name }}" />
+      <input type="text" class="form-control @error('name') is-invalid @enderror" id="categoryAdd" name="name" value="{{ $category->name }}" />
+      @error('name')
+        <p class="text-danger"> {{ $message }}</p>
+      @enderror
     </div>
-    <button type="submit" class="btn btn-primary">編集</button>  // 変更
+    <button type="submit" class="btn btn-primary">編集</button>
   </form>
   <div class="my-4">
-    <a href="{{ url('/category/') }}">> 一覧ページへ</a>  // 変更
+    <a href="{{ url('/category/') }}">> 一覧ページへ</a>
   </div>
 </div>
 @endsection
