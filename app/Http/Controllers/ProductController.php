@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -15,7 +16,8 @@ class ProductController extends Controller
     public function index()
     {
         //
-        return view('product.index');
+        $products = Product::latest()->paginate(5);
+        return view('product.index', ['products' => $products]);
 
     }
 
@@ -47,7 +49,7 @@ class ProductController extends Controller
             'category' => 'required',
             'image' => 'required|mimes:jpeg,png,jpg,gif,svg'],
             [
-            'name,required' => '商品を入力してください。',
+            'name.required' => '商品を入力してください。',
             'description.required' => '詳細を入力してください',
             'price.required' => '値段を入力してください。',
             'category.required' => 'カテゴリーを入力してください',
@@ -89,7 +91,8 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $product = Product::find($id);
+        return view('product.edit', ['product' => $product]);
     }
 
     /**
@@ -100,9 +103,35 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        //
-    }
+   {
+       request()->validate(
+           ['name' => 'required',
+            'description' => 'required',
+            'price' => 'required|integer',
+            'category' => 'required',
+            'image' => 'mimes:jpeg,png,jpg,gif,svg'],
+           ['name.required' => '商品名を入力してください。',
+            'description.required' => '詳細を入力してください。',
+            'price.required' => '値段を入力してください。',
+            'category.required' => 'カテゴリーを入力してください。']
+       );
+       $product = Product::find($id);
+       $name = $product->image;
+       if( $request->hasFile('image')) {
+           $image = $request->file('image');
+           $name = time().'.'.$image->getClientOriginalExtension();
+           $destinationPath = public_path('/images');
+           $image->move($destinationPath,$name);
+       }
+       $product->update([
+           'name'=>request('name'),
+           'description'=>request('description'),
+           'price'=>request('price'),
+           'category_id'=>request('category'),
+           'image'=>$name
+       ]);
+       return redirect()->route('product.index')->with('message','商品情報が更新されました。');
+   }
 
     /**
      * Remove the specified resource from storage.
@@ -112,6 +141,13 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $product = Product::find($id);
+        $product->delete();
+        return redirect('/product')->with('message', '商品情報が削除されました。');
+    }
+
+    public function productTop() {
+        $categories = Category::latest()->get();
+        return view('product.top', ['categories' => $categories]);
     }
 }

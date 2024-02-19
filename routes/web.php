@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
-use App\http\Controllers\ProductController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +23,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::resource('category', CategoryController::class);
-Route::resource('product', ProductController::class);
+Route::get('/',[ ProductController::class, 'productTop']);
+Route::resource('category', CategoryController::class)->middleware('auth');
+Route::resource('product', ProductController::class)->middleware('auth');;
